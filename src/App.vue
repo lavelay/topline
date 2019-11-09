@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2>APP根元素</h2>
+  <div id="app">
+    <router-view />
   </div>
 </template>
 
