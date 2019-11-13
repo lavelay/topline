@@ -7,8 +7,13 @@
         active-text-color="#ffd04b"
         :collapse="flag"
         :collapse-transition="false"
+        :router="true"
       >
-        <el-menu-item index="1" :style="{width:flag?'65px':'200px'}">
+        <el-menu-item
+          index="/welcome"
+          @click.native="$router.push('/welcome')"
+          :style="{width:flag?'65px':'200px'}"
+        >
           <i class="el-icon-location"></i>
           <span slot="title">首页</span>
         </el-menu-item>
@@ -18,8 +23,8 @@
             <i class="el-icon-menu"></i>
             <span>内容管理</span>
           </template>
-          <el-menu-item index="2-1">发布文章</el-menu-item>
-          <el-menu-item index="2-2">内容列表</el-menu-item>
+          <el-menu-item @click.native="$router.push('/article')" index="2-1">发布文章</el-menu-item>
+          <el-menu-item index="/article">文章列表</el-menu-item>
           <el-menu-item index="2-3">评论列表</el-menu-item>
           <el-menu-item index="2-4">素材管理</el-menu-item>
         </el-submenu>
@@ -40,7 +45,7 @@
           <span>江苏传智播客教育科技股份有限公司</span>
         </div>
         <div class="right">
-          <el-input style="width:240px;" placeholder="请输入内容">
+          <el-input style="width:240px;" v-model="search" placeholder="请输入内容">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <span style="margin:0 20px">消息</span>
@@ -67,6 +72,7 @@
 
 <script>
 export default {
+  name: 'homeCom',
   methods: {
     logout () {
       this.$confirm('确定退出系统么？~~~', '退出', {
@@ -83,7 +89,8 @@ export default {
   },
   data () {
     return {
-      flag: false
+      flag: false,
+      search: ''
     }
   },
   computed: {

@@ -46,7 +46,7 @@ export default {
       loginForm: {
         mobile: '18838460702',
         code: '246810',
-        xieyi: true
+        xieyi: false
       },
       loginFormRules: {
         mobile: [
