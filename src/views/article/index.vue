@@ -7,17 +7,21 @@
       <div class="text item">
         <el-form ref="searchFormRef" :model="searchForm" label-width="100px">
           <el-form-item label="文章状态：">
-            <template>
-              <el-radio v-model="searchForm.status" label>全部</el-radio>
-              <el-radio v-model="searchForm.status" label="0">草稿</el-radio>
-              <el-radio v-model="searchForm.status" label="1">待审核</el-radio>
-              <el-radio v-model="searchForm.status" label="2">审核通过</el-radio>
-              <el-radio v-model="searchForm.status" label="3">审核失败</el-radio>
-              <el-radio v-model="searchForm.status" label="4">已删除</el-radio>
-            </template>
+            <el-radio-group @change="getArticleList()" v-model="searchForm.status">
+              <el-radio label>全部</el-radio>
+              <el-radio label="0">草稿</el-radio>
+              <el-radio label="1">待审核</el-radio>
+              <el-radio label="2">审核通过</el-radio>
+              <el-radio label="3">审核失败</el-radio>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="频道列表：">
-            <el-select v-model="searchForm.channel_id" clearable placeholder="请选择">
+            <el-select
+              v-model="searchForm.channel_id"
+              clearable
+              placeholder="请选择"
+              @change="getArticleList()"
+            >
               <el-option
                 v-for="item in channelList"
                 :key="item.id"
@@ -62,15 +66,27 @@
               <el-tag v-else-if="stData.row.status===1" type="success">待审核</el-tag>
               <el-tag v-else-if="stData.row.status===2" type="info">审核通过</el-tag>
               <el-tag v-else-if="stData.row.status===3" type="warning">审核失败</el-tag>
-              <el-tag v-else type="danger">已删除</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="pubdate" label="发表时间"></el-table-column>
           <el-table-column label="操作">
-            <el-button type="primary" size="mini">修改</el-button>
-            <el-button type="danger" size="mini">删除</el-button>
+            <template slot-scope="stData">
+              <el-button type="primary" size="mini">修改</el-button>
+              <el-button type="danger" size="mini" @click="del(stData.row.id)">删除</el-button>
+            </template>
           </el-table-column>
         </el-table>
+      </div>
+      <div class="text item">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="searchForm.page"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="searchForm.per_page"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total_art"
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -80,6 +96,9 @@
 export default {
   name: 'ArticleList',
   watch: {
+    // 'searchForm.status' (nv, ov) {
+    //   this.getArticleList()
+    // },
     time (nv, ov) {
       if (nv) {
         this.searchForm.begin_pubdate = nv[0]
@@ -88,6 +107,7 @@ export default {
         this.searchForm.begin_pubdate = '';
         this.searchForm.end_pubdate = '';
       }
+      this.getArticleList()
     }
   },
   data () {
@@ -111,6 +131,36 @@ export default {
     this.getArticleList()
   },
   methods: {
+    del (id) {
+      this.$confirm('确定要删除此文章吗？', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.$http
+            .delete(`/mp/v1_0/articles/${id}`)
+            .then(res => {
+              this.getArticleList()
+            })
+            .catch(err => {
+              return this.$message.error('删除文章失败' + err)
+            })
+        })
+        .catch(() => {})
+    },
+    handleSizeChange (v) {
+      this.searchForm.per_page = v
+      this.getArticleList()
+    },
+    handleCurrentChange (val) {
+      this.searchForm.page = val
+      this.getArticleList()
+    },
     getChannelList () {
       this.$http
         .get('/mp/v1_0/channels')
@@ -126,9 +176,9 @@ export default {
     },
     getArticleList () {
       let searchData = {}
-      for (const k in this.searchForm) {
+      for (var k in this.searchForm) {
         if (this.searchForm[k]) {
-          searchData.k = this.searchForm.k
+          searchData[k] = this.searchForm[k]
         }
       }
       this.$http
@@ -152,5 +202,8 @@ export default {
 <style lang="less" scoped>
 .box-card {
   margin-bottom: 15px;
+}
+.el-pagination {
+  margin-top: 15px;
 }
 </style>
