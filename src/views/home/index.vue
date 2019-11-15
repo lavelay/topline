@@ -32,7 +32,7 @@
           <i class="el-icon-location"></i>
           <span slot="title">粉丝管理</span>
         </el-menu-item>
-        <el-menu-item index="4" :style="{width:flag?'65px':'200px'}">
+        <el-menu-item index="/account" :style="{width:flag?'65px':'200px'}">
           <i class="el-icon-location"></i>
           <span slot="title">账户信息</span>
         </el-menu-item>

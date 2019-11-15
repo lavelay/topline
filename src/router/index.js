@@ -27,6 +27,14 @@ const routes = [{
     path: '/articleadd',
     name: 'articleadd',
     component: () => import('@/views/articleadd')
+  }, {
+    path: '/articleedit/:aid',
+    name: 'articleedit',
+    component: () => import('@/views/articleedit')
+  }, {
+    path: '/account',
+    name: 'account',
+    component: () => import('@/views/account')
   }]
 }]
 
