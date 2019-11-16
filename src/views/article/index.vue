@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import ChannelCom from '@/components/channel';
+import ChannelCom from '@/components/channel'
 export default {
   name: 'ArticleList',
   components: {
@@ -103,8 +103,8 @@ export default {
         this.searchForm.begin_pubdate = nv[0]
         this.searchForm.end_pubdate = nv[1]
       } else {
-        this.searchForm.begin_pubdate = '';
-        this.searchForm.end_pubdate = '';
+        this.searchForm.begin_pubdate = ''
+        this.searchForm.end_pubdate = ''
       }
     }
   },

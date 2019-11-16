@@ -26,7 +26,7 @@
           <el-menu-item index="/articleadd">发布文章</el-menu-item>
           <el-menu-item index="/article">文章列表</el-menu-item>
           <el-menu-item index="2-3">评论列表</el-menu-item>
-          <el-menu-item index="2-4">素材管理</el-menu-item>
+          <el-menu-item index="/material">素材管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="3" :style="{width:flag?'65px':'200px'}">
           <i class="el-icon-location"></i>
@@ -71,8 +71,25 @@
 </template>
 
 <script>
+import bus from '@/utils/bus.js'
+
 export default {
   name: 'homeCom',
+
+  created () {
+    bus.$on('nm', v => {
+      let userinfo = JSON.parse(window.sessionStorage.getItem('userinfo'))
+      userinfo.name = v
+      window.sessionStorage.setItem('userinfo', JSON.stringify(userinfo))
+      this.tempname = v
+    })
+    bus.$on('pt', v => {
+      let userinfo = JSON.parse(window.sessionStorage.getItem('userinfo'))
+      userinfo.photo = v
+      window.sessionStorage.setItem('userinfo', JSON.stringify(userinfo))
+      this.tempphoto = v
+    })
+  },
   methods: {
     logout () {
       this.$confirm('确定退出系统么？~~~', '退出', {
@@ -90,15 +107,17 @@ export default {
   data () {
     return {
       flag: false,
+      tempname: '',
+      tempphoto: '',
       search: ''
     }
   },
   computed: {
     name () {
-      return JSON.parse(window.sessionStorage.getItem('userinfo')).name
+      return this.tempname || JSON.parse(window.sessionStorage.getItem('userinfo')).name
     },
     photo () {
-      return JSON.parse(window.sessionStorage.getItem('userinfo')).photo
+      return this.tempphoto || JSON.parse(window.sessionStorage.getItem('userinfo')).photo
     }
   }
 }

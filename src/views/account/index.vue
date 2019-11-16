@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import bus from '@/utils/bus.js'
+
 export default {
   name: 'Account',
   data () {
@@ -96,6 +98,8 @@ export default {
             .then(res => {
               if (res.data.message === 'OK') {
                 this.$message.success('更新账户成功!!!')
+                bus.$emit('nm', this.accountForm.name)
+                bus.$emit('pt', this.accountForm.photo)
               }
             })
             .catch(err => {
