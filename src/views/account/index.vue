@@ -28,7 +28,19 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="rt"></div>
+      <div class="rt">
+        <p>点击上传用户头像</p>
+        <el-upload action :show-file-list="false" :http-request="httpRequest">
+          <img
+            width="150"
+            height="150"
+            v-if="accountForm.photo"
+            :src="accountForm.photo"
+            class="avatar"
+          />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </div>
     </div>
   </el-card>
 </template>
@@ -42,7 +54,8 @@ export default {
         name: '',
         email: '',
         mobile: '',
-        intro: ''
+        intro: '',
+        photo: ''
       },
       accountFormRules: {
         name: [
@@ -60,7 +73,37 @@ export default {
     this.getAccount()
   },
   methods: {
-    editAccount () {},
+    httpRequest (resource) {
+      let fd = new FormData()
+      fd.append('photo', resource.file)
+      this.$http
+        .patch('/mp/v1_0/user/photo', fd)
+        .then(resource => {
+          if (resource.data.message === 'OK') {
+            this.accountForm.photo = resource.data.data.photo
+            this.$message.success('上传图片成功！！！')
+          }
+        })
+        .catch(err => {
+          return this.$message.error('上传图片失败' + err)
+        })
+    },
+    editAccount () {
+      this.$refs.accountFormRef.validate(valid => {
+        if (valid) {
+          this.$http
+            .patch('/mp/v1_0/user/profile', this.accountForm)
+            .then(res => {
+              if (res.data.message === 'OK') {
+                this.$message.success('更新账户成功!!!')
+              }
+            })
+            .catch(err => {
+              return this.$message.error('更新账户错误' + err)
+            })
+        }
+      })
+    },
     getAccount () {
       this.$http
         .get('/mp/v1_0/user/profile')
@@ -86,7 +129,6 @@ export default {
   }
   .rt {
     width: 30%;
-    background-color: green;
   }
 }
 </style>
