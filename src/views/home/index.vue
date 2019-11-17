@@ -25,10 +25,10 @@
           </template>
           <el-menu-item index="/articleadd">发布文章</el-menu-item>
           <el-menu-item index="/article">文章列表</el-menu-item>
-          <el-menu-item index="2-3">评论列表</el-menu-item>
+          <el-menu-item index="/comment">评论列表</el-menu-item>
           <el-menu-item index="/material">素材管理</el-menu-item>
         </el-submenu>
-        <el-menu-item index="3" :style="{width:flag?'65px':'200px'}">
+        <el-menu-item index="/fans" :style="{width:flag?'65px':'200px'}">
           <i class="el-icon-location"></i>
           <span slot="title">粉丝管理</span>
         </el-menu-item>
@@ -56,8 +56,10 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人信息</el-dropdown-item>
-              <el-dropdown-item>github</el-dropdown-item>
+              <el-dropdown-item @click.native="$router.push('/account')">个人信息</el-dropdown-item>
+              <el-dropdown-item>
+                <a target="_blank" href="https://github.com/lavelay">github</a>
+              </el-dropdown-item>
               <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -114,16 +116,26 @@ export default {
   },
   computed: {
     name () {
-      return this.tempname || JSON.parse(window.sessionStorage.getItem('userinfo')).name
+      return (
+        this.tempname ||
+        JSON.parse(window.sessionStorage.getItem('userinfo')).name
+      )
     },
     photo () {
-      return this.tempphoto || JSON.parse(window.sessionStorage.getItem('userinfo')).photo
+      return (
+        this.tempphoto ||
+        JSON.parse(window.sessionStorage.getItem('userinfo')).photo
+      )
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+a {
+  text-decoration: none;
+  color: #323745;
+}
 .el-container {
   height: 100%;
   .el-aside {

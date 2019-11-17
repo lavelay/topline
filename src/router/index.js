@@ -39,6 +39,14 @@ const routes = [{
     path: '/material',
     name: 'material',
     component: () => import('@/views/material')
+  }, {
+    path: '/comment',
+    name: 'comment',
+    component: () => import('@/views/comment')
+  }, {
+    path: '/fans',
+    name: 'fans',
+    component: () => import('@/views/fans')
   }]
 }]
 
