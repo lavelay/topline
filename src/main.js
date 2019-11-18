@@ -4,11 +4,9 @@ import router from './router'
 
 import '@/assets/css/global.css'
 
-import ElementUI from 'element-ui'
+import '@/utils/element.js'
 
 import '@/utils/ax.js'
-
-Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 

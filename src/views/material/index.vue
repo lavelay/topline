@@ -74,19 +74,21 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$http
-          .delete(`/mp/v1_0/user/images/${id}`)
-          .then(res => {
-            if (res.status === 204) {
-              this.$message.success('删除图片成功!!')
-              this.getMaterial()
-            }
-          })
-          .catch(err => {
-            return this.$message.error('删除图片失败' + err)
-          })
-      }).catch(() => {})
+      })
+        .then(() => {
+          this.$http
+            .delete(`/mp/v1_0/user/images/${id}`)
+            .then(res => {
+              if (res.status === 204) {
+                this.$message.success('删除图片成功!!')
+                this.getMaterial()
+              }
+            })
+            .catch(err => {
+              return this.$message.error('删除图片失败' + err)
+            })
+        })
+        .catch(() => {})
     },
     imgCollect (id, isCollect) {
       isCollect = !isCollect
@@ -94,7 +96,9 @@ export default {
         .put(`/mp/v1_0/user/images/${id}`, { collect: isCollect })
         .then(res => {
           if (res.data.message === 'OK') {
-            isCollect ? this.$message.success('收藏图片成功！！') : this.$message.success('取消收藏成功！！')
+            isCollect
+              ? this.$message.success('收藏图片成功！！')
+              : this.$message.success('取消收藏成功！！')
             this.getMaterial()
           }
         })

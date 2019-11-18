@@ -1,3 +1,4 @@
+/* eslint-disable space-before-blocks */
 <template>
   <div>
     <el-card class="box-card">
@@ -20,9 +21,9 @@
               <el-radio :label="-1">自动</el-radio>
             </el-radio-group>
             <ul>
-              <li @click="showDialog" class="uploadbox" v-for="item in imageNum" :key="item">
+              <li @click="showDialog(item)" class="uploadbox" v-for="item in imageNum" :key="item">
                 <span>点击图标选择图片</span>
-                <img v-if="addForm.cover.images[item-1]" :src="addForm.cover.images[item-1]" alt />
+                <img :src="addForm.cover.images[item-1]" v-if="addForm.cover.images[item-1]" alt />
                 <div v-else class="el-icon-picture-outline"></div>
               </li>
             </ul>
@@ -42,9 +43,18 @@
             <img :src="item.url" alt="没有图片" @click="clkImage" />
           </li>
         </ul>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="querycdt.page"
+          :page-sizes="[9, 12, 15]"
+          :page-size="querycdt.per_page"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total_art"
+        ></el-pagination>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="addImg">确 定</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -79,12 +89,15 @@ export default {
   },
   data () {
     return {
+      xu: 0,
+      imgNum: '',
       imageList: [],
       querycdt: {
         collect: false,
         page: 1,
-        per_page: 10
+        per_page: 9
       },
+      total_art: 0,
       dialogVisible: false,
       addForm: {
         channel_id: '',
@@ -106,28 +119,51 @@ export default {
     }
   },
   methods: {
-    clkImage (e) {
-      let lis = document.querySelectorAll('.image-box')
-      for (let i = 0; i < lis.length; i++) {
-        lis[i].style.border = ''
+    addImg () {
+      if (this.imgNum) {
+        this.dialogVisible = false
+        this.addForm.cover.images[this.xu] = this.imgNum
+      } else {
+        this.$message.error('请选择一张图片')
       }
+    },
+    handleSizeChange (v) {
+      this.querycdt.per_page = v
+      this.getMaterial()
+    },
+    handleCurrentChange (v) {
+      this.querycdt.page = v
+      this.getMaterial()
+    },
+    clkImage (e) {
+      this.clearImg()
       e.target.parentNode.style.border = '4px solid blue'
+      this.imgNum = e.target.src
     },
     getMaterial () {
       this.$http
         .get('/mp/v1_0/user/images', { params: this.querycdt })
         .then(res => {
           if (res.data.message === 'OK') {
-            // console.log(res)
             this.imageList = res.data.data.results
+            this.total_art = res.data.data.total_count
           }
         })
         .catch(err => {
           return this.$message.error('获取素材失败' + err)
         })
     },
-    showDialog () {
+    clearImg () {
+      let lis = document.querySelectorAll('.image-box')
+      for (let i = 0; i < lis.length; i++) {
+        lis[i].style.border = ''
+      }
+      this.imgNum = ''
+    },
+    showDialog (n) {
+      this.clearImg()
       this.dialogVisible = true
+      this.xu = n - 1
     },
     selectHandler (v) {
       this.addForm.channel_id = v
@@ -156,6 +192,10 @@ export default {
 <style lang="less" scoped>
 .el-form /deep/ .ql-editor {
   height: 200px;
+}
+.el-dialog,
+ul {
+  overflow: hidden;
 }
 // 文章封面选择框样式
 .uploadbox {
@@ -196,8 +236,8 @@ export default {
   margin: 10px;
   float: left;
   border: 1px solid #eee;
-  cursor:pointer;
-  box-sizing:border-box;
+  cursor: pointer;
+  box-sizing: border-box;
   img {
     width: 100%;
     height: 100%;
